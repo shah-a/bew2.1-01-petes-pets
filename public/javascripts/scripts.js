@@ -13,7 +13,15 @@ if (document.querySelector('#new-pet')) {
         window.location.replace(`/pets/${response.data.pet._id}`);
       })
       .catch(function (error) {
-        console.log(error);
+        const alert = document.getElementById('alert');
+        alert.classList.add('alert-danger');
+        alert.textContent = "Oops, something went wrong saving your pet. Please check your information and try again."
+        alert.style.display = 'block';
+        setTimeout(function () {
+          alert.classList.remove('alert-danger');
+          alert.textContent = "";
+          alert.style.display = 'none';
+        }, 3000);
       });
   });
 }
