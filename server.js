@@ -23,11 +23,11 @@ app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 
 // override with POST having ?_method=DELETE or ?_method=PUT
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method')) // middleware for clients limited to GET/POST; allows changing form POSTs to other HTTP verbs
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(logger('dev')); // middleware for logging information about incoming http requests
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
