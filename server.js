@@ -12,6 +12,7 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override')
 
 const app = express();
+app.locals.STRIPE_PK = process.env.STRIPE_PK;
 
 const mongoose = require('mongoose');
 // mongoose.set('debug', true);

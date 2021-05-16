@@ -112,4 +112,10 @@ module.exports = (app) => {
       return res.redirect('/')
     });
   });
+
+  // CREATE PET
+  app.post('/pets/:id/purchase', (req, res) => {
+    console.log(req.body);
+    res.end();
+  });
 }
