@@ -6,6 +6,10 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const Upload = require('s3-uploader');
 
+// SENDING EMAILS VIA MAILGUN
+const mailer = require('../utils/mailer');
+const pet = require('../models/pet');
+
 const client = new Upload(process.env.S3_BUCKET, {
   aws: {
     path: 'pets/avatar',
@@ -119,8 +123,10 @@ module.exports = (app) => {
     const token = req.body.stripeToken;
     const petId = req.body.petId || req.params.id;
 
+    let pet;
     Pet.findById(petId)
-      .then((pet) => {
+      .then((query) => {
+        pet = query;
         return stripe.charges.create({
           amount: pet.price * 100,
           currency: 'usd',
@@ -128,8 +134,13 @@ module.exports = (app) => {
           source: token
         })
       })
-      .then(() => {
-        res.redirect(`/pets/${req.params.id}`);
+      .then((charge) => {
+        const user = {
+          email: req.body.stripeEmail,
+          amount: charge.amount / 100,
+          petName: pet.name
+        };
+        return mailer.sendMail(user, req, res);
       })
       .catch((err) => {
         console.log('Error:', err);
