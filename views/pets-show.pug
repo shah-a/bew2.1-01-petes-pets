@@ -21,5 +21,6 @@ block content
         data-image='https://stripe.com/img/documentation/checkout/marketplace.png',
         data-locale='auto',
         data-zip-code='true')
+        input.form-control(name="petId" type="hidden" value=pet._id)
       .text-right
         a(href="/pets/" + pet.id + "/edit").btn-link Edit

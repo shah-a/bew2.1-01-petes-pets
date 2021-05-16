@@ -114,8 +114,26 @@ module.exports = (app) => {
   });
 
   // CREATE PET
-  app.post('/pets/:id/purchase', (req, res) => {
-    console.log(req.body);
-    res.end();
+  app.post('/pets/:id/purchase', async (req, res) => {
+    const stripe = require('stripe')(process.env.STRIPE_SK);
+    const token = req.body.stripeToken;
+    const petId = req.body.petId || req.params.id;
+
+    Pet.findById(petId)
+      .then((pet) => {
+        return stripe.charges.create({
+          amount: pet.price * 100,
+          currency: 'usd',
+          description: `Purchased ${pet.name}, ${pet.species}`,
+          source: token
+        })
+      })
+      .then(() => {
+        res.redirect(`/pets/${req.params.id}`);
+      })
+      .catch((err) => {
+        console.log('Error:', err);
+        res.redirect(`/pets/${req.params.id}`);
+      })
   });
 }
