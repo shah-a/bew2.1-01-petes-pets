@@ -14,6 +14,7 @@ const methodOverride = require('method-override')
 const app = express();
 
 const mongoose = require('mongoose');
+// mongoose.set('debug', true);
 mongoose.connect('mongodb://localhost/petes-pets');
 
 // view engine setup

@@ -2,13 +2,14 @@ if (document.querySelector('#new-pet')) {
   document.querySelector('#new-pet').addEventListener('submit', (e) => {
     e.preventDefault();
 
-    let pet = {};
-    const inputs = document.querySelectorAll('.form-control');
-    for (const input of inputs) {
-      pet[input.name] = input.value;
-    }
+    var form = document.getElementById('new-pet');
+    var pet = new FormData(form);
 
-    axios.post('/pets', pet)
+    axios.post('/pets', pet, {
+      headers: {
+        'Content-Type': 'multipart/form-data;'
+      }
+    })
       .then(function (response) {
         window.location.replace(`/pets/${response.data.pet._id}`);
       })
