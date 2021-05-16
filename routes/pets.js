@@ -79,23 +79,49 @@ module.exports = (app) => {
     });
   });
 
-  // SEARCH PET
+  // OLD SEARCH PET, with proper pagination
+  // app.get('/search', (req, res) => {
+  //   const term = new RegExp(req.query.term, 'i');
+  //   const page = req.query.page || 1
+  //   Pet.paginate({
+  //     $or: [
+  //       { 'name': term },
+  //       { 'species': term }
+  //     ]
+  //   }, { page: page })
+  //     .then((results) => {
+  //       res.render('pets-index', {
+  //         'pets': results.docs,
+  //         'currentPage': results.page,
+  //         'pagesCount': results.pages,
+  //         'term': req.query.term
+  //       });
+  //     });
+  // });
+
+  // NEW SEARCH PET, broken pagination, but has full text search
   app.get('/search', (req, res) => {
-    const term = new RegExp(req.query.term, 'i');
-    const page = req.query.page || 1
-    Pet.paginate({
-      $or: [
-        { 'name': term },
-        { 'species': term }
-      ]
-    }, { page: page })
-      .then((results) => {
-        res.render('pets-index', {
-          'pets': results.docs,
-          'currentPage': results.page,
-          'pagesCount': results.pages,
-          'term': req.query.term
-        });
+    Pet
+      .find(
+        { $text: { $search: req.query.term } },
+        { score: { $meta: 'textScore' } }
+      )
+      .sort({
+        score: { $meta: 'textScore' }
+      })
+      // .limit(20) // <-- needs pagination to work properly
+      .exec((err, pets) => {
+        if (err) { return res.status(400).send({ err: err }); }
+        if (req.header('Content-Type') == 'application/json') {
+          return res.json({ pets: pets });
+        } else {
+          return res.render('pets-index', {
+            'pets': pets,
+            // 'currentPage': ???, <-- fill in to fix pagination
+            // 'pagesCount': ???,  <-- fill in to fix pagination
+            'term': req.query.term
+          });
+        }
       });
   });
 
