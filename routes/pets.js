@@ -143,7 +143,7 @@ module.exports = (app) => {
     });
   });
 
-  // CREATE PET
+  // PURCHASE PET
   app.post('/pets/:id/purchase', async (req, res) => {
     const stripe = require('stripe')(process.env.STRIPE_SK);
     const token = req.body.stripeToken;

@@ -23,7 +23,7 @@ const sendMail = (user, req, res) => {
       context: user
     }
   }).then((info) => {
-    console.log("Mailgun response:", info)
+    // console.log("Mailgun response:", info)
     res.redirect(`/pets/${req.params.id}`);
   }).catch((err) => {
     console.log("Error:", err);
